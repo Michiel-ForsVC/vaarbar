@@ -2,23 +2,24 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>DE VAARBAR — Bestellingen</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap');
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
   :root {
     --black: #0a0a0a;
-    --white: #ffffff;
+    --ink: #14110d;
     --off-white: #f4f1ec;
-    --gray-light: #e8e4dd;
+    --paper: #ebe6dd;
     --gray-mid: #b0a99e;
     --gray-dark: #4a4540;
     --accent: #3d6fd4;
-    --accent-dark: #2347a8;
+    --accent-dark: #2c54a8;
     --danger: #c0392b;
+    --line: #ddd6ca;
   }
 
   html, body {
@@ -26,1005 +27,421 @@
     background: var(--black);
     font-family: 'DM Sans', sans-serif;
     overflow: hidden;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* LAYOUT */
+  /* ===== LAYOUT (tablet 16:10 default) ===== */
   #app {
     display: grid;
-    grid-template-columns: 1fr 380px;
-    grid-template-rows: 64px 1fr;
-    height: 100vh;
-    width: 100vw;
+    grid-template-columns: 1fr 360px;
+    grid-template-rows: 60px 1fr;
+    height: 100vh; width: 100vw;
+    background: var(--off-white);
   }
 
-  /* HEADER */
+  /* ===== HEADER ===== */
   #header {
     grid-column: 1 / -1;
     background: var(--black);
-    border-bottom: 1px solid #222;
-    display: flex;
-    align-items: center;
-    padding: 0 24px;
-    gap: 20px;
+    display: flex; align-items: center;
+    padding: 0 18px; gap: 16px;
+    z-index: 30;
   }
-
-  .logo-circle {
-    width: 42px; height: 42px;
-    border: 2px solid var(--white);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    flex-shrink: 0;
+  .logo {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid #fff; flex-shrink: 0;
+    display: grid; place-items: center;
+    position: relative; background: var(--black);
   }
-
-  .logo-text-svg {
-    width: 38px; height: 38px;
-  }
-
+  .logo svg { width: 40px; height: 40px; }
+  .logo .dot { font-family: 'Bebas Neue'; color:#fff; font-size: 15px; letter-spacing:.5px; }
   #header h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
-    color: var(--white);
-    letter-spacing: 3px;
+    font-family: 'Bebas Neue', sans-serif; color: #fff;
+    font-size: 26px; letter-spacing: 3px; line-height: 1;
   }
+  #header .sub { color: var(--gray-mid); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-left: auto; }
 
-  #header .subtitle {
-    font-size: 12px;
-    color: var(--gray-mid);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-left: auto;
-  }
+  /* ===== LEFT: ORDER ENTRY ===== */
+  #entry { display: flex; flex-direction: column; min-height: 0; }
 
-  /* LEFT PANEL - MENU */
-  #menu-panel {
-    background: #111;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* TABS */
+  /* tabs */
   #tabs {
-    display: flex;
-    background: var(--black);
-    border-bottom: 1px solid #222;
-    overflow-x: auto;
-    scrollbar-width: none;
+    display: flex; gap: 6px; padding: 12px 14px 0; overflow-x: auto;
+    scrollbar-width: none; flex-shrink: 0;
   }
   #tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1.5px;
+    padding: 9px 16px; border: none; cursor: pointer; white-space: nowrap;
+    background: var(--paper); color: var(--gray-dark); border-radius: 10px 10px 0 0;
+    transition: all .15s; position: relative; top: 1px;
+  }
+  .tab.fav { display:flex; align-items:center; gap:6px; }
+  .tab.fav svg { width:15px; height:15px; }
+  .tab.active { background: var(--accent); color: #fff; }
+  .tab.active.fav svg path { fill:#fff; }
 
-  .tab-btn {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 15px;
-    letter-spacing: 2px;
-    color: var(--gray-mid);
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    padding: 14px 22px 11px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: color 0.15s, border-color 0.15s;
-    flex-shrink: 0;
+  /* search */
+  #searchwrap { padding: 10px 14px 6px; flex-shrink: 0; }
+  #search {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--line); border-radius: 10px;
+    font-family: 'DM Sans'; font-size: 15px; background: #fff; color: var(--ink);
+    outline: none; transition: border-color .15s;
   }
-  .tab-btn:hover { color: var(--white); }
-  .tab-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
+  #search:focus { border-color: var(--accent); }
+  #search::placeholder { color: var(--gray-mid); }
 
-  /* ITEMS GRID */
-  #items-container {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    scrollbar-width: thin;
-    scrollbar-color: #333 transparent;
+  /* grid */
+  #gridwrap { flex: 1; overflow-y: auto; padding: 6px 14px 18px; }
+  #gridwrap::-webkit-scrollbar { width: 8px; }
+  #gridwrap::-webkit-scrollbar-thumb { background: var(--gray-mid); border-radius: 4px; }
+  #grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 9px;
   }
-
-  .items-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 12px;
-  }
-
-  .item-card {
-    background: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 10px;
-    padding: 16px 14px;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s, transform 0.1s;
-    position: relative;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .item-card:hover {
-    background: #222;
-    border-color: #3a3a3a;
-  }
-  .item-card:active {
-    transform: scale(0.97);
-    background: #252520;
-    border-color: var(--accent);
-  }
-  .item-card.in-order {
-    border-color: var(--accent);
-    background: #141b2e;
-  }
-
-  .item-card .item-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--white);
-    line-height: 1.3;
-    margin-bottom: 6px;
-  }
-  .item-card .item-sub {
-    font-size: 11px;
-    color: var(--gray-mid);
-    margin-bottom: 10px;
-    line-height: 1.3;
-  }
-  .item-card .item-price {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    color: var(--accent);
-    letter-spacing: 1px;
-  }
-
-  .item-qty-badge {
-    position: absolute;
-    top: 10px; right: 10px;
-    background: var(--accent);
-    color: var(--white);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 15px;
-    min-width: 24px; height: 24px;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    padding: 0 6px;
-    line-height: 1;
-  }
-
-  /* RIGHT PANEL - ORDER */
-  #order-panel {
-    background: var(--off-white);
-    border-left: 1px solid #222;
-    display: flex;
-    flex-direction: column;
+  .card {
+    position: relative; border-radius: 12px; padding: 12px 12px 10px;
+    cursor: pointer; user-select: none; min-height: 78px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    border: 1.5px solid rgba(0,0,0,.14);
+    box-shadow: 0 1px 0 rgba(0,0,0,.12), 0 3px 8px rgba(0,0,0,.06);
+    transition: transform .08s ease, box-shadow .12s ease;
     overflow: hidden;
   }
+  .card::after {
+    content:""; position:absolute; inset:0; background:#000; opacity:0;
+    transition: opacity .12s; pointer-events:none;
+  }
+  .card:active { transform: scale(.96); }
+  .card.flash::after { opacity:.16; }
+  .card .nm {
+    font-weight: 600; font-size: 14px; line-height: 1.18; letter-spacing: .1px;
+    text-shadow: 0 1px 1px rgba(0,0,0,.08);
+  }
+  .card .pr {
+    align-self: flex-start; margin-top: 8px; font-family:'Bebas Neue'; letter-spacing:1px;
+    font-size: 17px; padding: 1px 9px; border-radius: 6px; line-height: 1.35;
+  }
+  .card .qty {
+    position: absolute; top: 7px; right: 7px; min-width: 24px; height: 24px; padding: 0 6px;
+    border-radius: 13px; background: var(--accent); color:#fff;
+    font-family:'Bebas Neue'; font-size: 15px; letter-spacing:1px;
+    display: none; align-items: center; justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.3); border: 2px solid #fff;
+  }
+  .card.incart .qty { display: flex; }
+  .card.incart { outline: 3px solid var(--accent); outline-offset: 1px; }
+  .empty-grid { color: var(--gray-mid); font-size: 15px; padding: 30px 6px; grid-column: 1/-1; text-align:center; }
 
-  #order-header {
-    padding: 18px 20px 14px;
-    border-bottom: 1px solid var(--gray-light);
-    flex-shrink: 0;
+  /* ===== RIGHT: ORDER OVERVIEW ===== */
+  #order {
+    background: var(--black); color: #fff; display: flex; flex-direction: column; min-height: 0;
   }
+  #order h2 {
+    font-family:'Bebas Neue'; font-size: 22px; letter-spacing: 2.5px; padding: 16px 18px 10px;
+    border-bottom: 1px solid #222; display:flex; justify-content:space-between; align-items:baseline;
+  }
+  #order h2 .cnt { font-size: 14px; color: var(--gray-mid); letter-spacing:1px; }
+  #lines { flex: 1; overflow-y: auto; padding: 6px 12px; }
+  #lines::-webkit-scrollbar { width: 7px; }
+  #lines::-webkit-scrollbar-thumb { background:#333; border-radius:4px; }
+  .line { display: flex; align-items: center; gap: 10px; padding: 9px 6px; border-bottom: 1px solid #1c1c1c; }
+  .line .swatch { width: 9px; height: 32px; border-radius: 3px; flex-shrink:0; }
+  .line .info { flex: 1; min-width: 0; }
+  .line .ln { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .line .lp { font-size: 12px; color: var(--gray-mid); }
+  .line .ctrl { display: flex; align-items: center; gap: 8px; flex-shrink:0; }
+  .line .ctrl button {
+    width: 28px; height: 28px; border-radius: 8px; border: none; cursor: pointer;
+    font-size: 18px; font-weight: 700; line-height: 1; display:grid; place-items:center;
+    background: #262626; color: #fff; transition: background .12s;
+  }
+  .line .ctrl button:active { background: var(--accent); }
+  .line .ctrl .n { font-family:'Bebas Neue'; font-size: 18px; min-width: 20px; text-align: center; }
+  .line .lt { font-family:'Bebas Neue'; font-size: 17px; min-width: 52px; text-align: right; letter-spacing:.5px; }
+  .empty-order { color: #555; text-align: center; padding: 40px 20px; font-size: 14px; }
 
-  #order-header h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    letter-spacing: 2px;
-    color: var(--black);
+  #foot { border-top: 1px solid #222; padding: 14px 18px 16px; flex-shrink: 0; }
+  #total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  #total-row .lbl { font-family:'Bebas Neue'; font-size: 20px; letter-spacing: 2px; color:#fff; }
+  #total-row .amt {
+    font-family:'Bebas Neue'; font-size: 32px; letter-spacing: 1px; color: #fff;
+    background: var(--accent); padding: 4px 16px; border-radius: 10px; line-height: 1.1;
   }
+  #newbtn {
+    width: 100%; padding: 15px; border: none; border-radius: 12px; cursor: pointer;
+    background: var(--accent); color: #fff; font-family:'Bebas Neue'; font-size: 22px; letter-spacing: 3px;
+    transition: background .15s;
+  }
+  #newbtn:active { background: var(--accent-dark); }
+  #newbtn:disabled { background:#262626; color:#555; cursor: default; }
 
-  #order-header .order-meta {
-    font-size: 11px;
-    color: var(--gray-dark);
-    margin-top: 2px;
-    letter-spacing: 0.5px;
-  }
+  /* mobile order toggle handle (hidden on desktop) */
+  #handle { display: none; }
 
-  #order-items {
-    flex: 1;
-    overflow-y: auto;
-    padding: 12px 16px;
-    scrollbar-width: thin;
-    scrollbar-color: #ccc transparent;
+  /* ===== CONFIRM MODAL ===== */
+  #modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none;
+    align-items: center; justify-content: center; z-index: 100; padding: 24px;
   }
+  #modal.show { display: flex; }
+  .modal-box {
+    background: var(--off-white); border-radius: 16px; padding: 26px 24px; max-width: 340px; width: 100%;
+    text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  }
+  .modal-box h3 { font-family:'Bebas Neue'; font-size: 26px; letter-spacing: 2px; margin-bottom: 8px; }
+  .modal-box p { color: var(--gray-dark); font-size: 14px; margin-bottom: 20px; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns button {
+    flex: 1; padding: 13px; border: none; border-radius: 10px; cursor: pointer;
+    font-family:'Bebas Neue'; font-size: 18px; letter-spacing: 1.5px;
+  }
+  .mb-cancel { background: var(--paper); color: var(--gray-dark); }
+  .mb-ok { background: var(--danger); color: #fff; }
 
-  .order-item-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--gray-light);
-    animation: slideIn 0.15s ease;
-  }
-
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(8px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  .order-item-name {
-    flex: 1;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--black);
-    line-height: 1.3;
-  }
-
-  .order-item-price {
-    font-size: 12px;
-    color: var(--gray-dark);
-    min-width: 40px;
-    text-align: right;
-  }
-
-  .qty-controls {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    background: var(--white);
-    border: 1px solid var(--gray-light);
-    border-radius: 8px;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .qty-btn {
-    width: 32px; height: 32px;
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: var(--black);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.1s;
-    font-weight: 600;
-    line-height: 1;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .qty-btn:hover { background: var(--gray-light); }
-  .qty-btn.minus { color: var(--danger); }
-
-  .qty-display {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 17px;
-    min-width: 28px;
-    text-align: center;
-    color: var(--black);
-    border-left: 1px solid var(--gray-light);
-    border-right: 1px solid var(--gray-light);
-    line-height: 32px;
-    height: 32px;
-  }
-
-  /* ORDER FOOTER */
-  #order-footer {
-    padding: 14px 16px;
-    border-top: 1px solid var(--gray-light);
-    flex-shrink: 0;
-    background: var(--off-white);
-  }
-
-  #total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 14px;
-  }
-
-  #total-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 16px;
-    letter-spacing: 2px;
-    color: var(--gray-dark);
-  }
-
-  #total-amount {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    color: var(--black);
-    letter-spacing: 1px;
-  }
-
-  #count-row {
-    font-size: 11px;
-    color: var(--gray-mid);
-    margin-bottom: 14px;
-  }
-
-  #new-order-btn {
-    width: 100%;
-    background: var(--black);
-    color: var(--white);
-    border: none;
-    border-radius: 10px;
-    padding: 16px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    letter-spacing: 3px;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  #new-order-btn:hover { background: #222; }
-  #new-order-btn:active { transform: scale(0.98); background: var(--accent-dark); }
-
-  .empty-order {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--gray-mid);
-    font-size: 13px;
-  }
-  .empty-order svg {
-    display: block;
-    margin: 0 auto 12px;
-    opacity: 0.3;
-  }
-
-  /* Confirm overlay */
-  #confirm-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-  }
-  #confirm-overlay.show { display: flex; }
-
-  #confirm-box {
-    background: var(--off-white);
-    border-radius: 16px;
-    padding: 32px;
-    max-width: 340px;
-    width: 90%;
-    text-align: center;
-  }
-  #confirm-box h3 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 2px;
-    color: var(--black);
-    margin-bottom: 8px;
-  }
-  #confirm-box p {
-    font-size: 14px;
-    color: var(--gray-dark);
-    margin-bottom: 24px;
-    line-height: 1.5;
-  }
-  .confirm-btns {
-    display: flex;
-    gap: 10px;
-  }
-  .confirm-btns button {
-    flex: 1;
-    padding: 14px;
-    border-radius: 10px;
-    border: none;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-  .confirm-btns button:hover { opacity: 0.85; }
-  #confirm-cancel { background: var(--gray-light); color: var(--black); }
-  #confirm-ok { background: var(--black); color: var(--white); }
-
-  /* MOBILE */
-  @media (max-width: 768px) {
+  /* ===== MOBILE ===== */
+  @media (max-width: 820px) {
     #app {
       grid-template-columns: 1fr;
-      grid-template-rows: 56px 1fr auto;
+      grid-template-rows: 56px 1fr;
     }
-
-    #header { padding: 0 16px; }
-    #header h1 { font-size: 22px; }
-    #header .subtitle { display: none; }
-
-    #menu-panel {
-      grid-column: 1;
-      grid-row: 2;
-      overflow: hidden;
+    #order {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+      height: 80vh; border-radius: 20px 20px 0 0;
+      transform: translateY(calc(100% - 76px));
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 -8px 30px rgba(0,0,0,.4);
+      touch-action: none;
     }
-
-    #order-panel {
-      grid-column: 1;
-      grid-row: 3;
-      border-left: none;
-      border-top: 1px solid #333;
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: auto;
-      max-height: 80vh;
-      border-radius: 18px 18px 0 0;
-      box-shadow: 0 -4px 24px rgba(0,0,0,0.3);
-      z-index: 50;
-      transform: translateY(calc(100% - 68px));
-      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden;
+    #order.open { transform: translateY(0); }
+    #handle {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 8px 0 4px; cursor: pointer; flex-shrink: 0;
     }
-
-    #order-panel.open {
-      transform: translateY(0);
+    #handle .bar { width: 42px; height: 4px; border-radius: 2px; background: #555; margin-bottom: 6px; }
+    #handle .peek {
+      display: flex; align-items: center; gap: 10px; font-family:'Bebas Neue'; letter-spacing:1.5px;
+      font-size: 17px; color:#fff;
     }
-
-    #order-handle {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px 20px 0;
-      cursor: pointer;
-      background: var(--off-white);
-      flex-shrink: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .handle-bar {
-      width: 36px; height: 4px;
-      background: var(--gray-mid);
-      border-radius: 2px;
-      margin-bottom: 8px;
-    }
-
-    #order-handle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding-bottom: 10px;
-    }
-
-    #order-handle h2 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 18px;
-      letter-spacing: 2px;
-      color: var(--black);
-    }
-
-    #mobile-total-pill {
-      background: var(--black);
-      color: var(--accent);
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 16px;
-      letter-spacing: 1px;
-      padding: 4px 14px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    #mobile-badge {
-      background: var(--accent);
-      color: var(--white);
-      font-size: 13px;
-      min-width: 20px; height: 20px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      padding: 0 5px;
-    }
-
-    #order-header { display: none; }
-
-    #order-items {
-      max-height: calc(80vh - 180px);
-      overflow-y: auto;
-    }
-
-    #items-container { padding: 12px; }
-    .items-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-    .item-card { padding: 12px 10px; }
-    .item-card .item-name { font-size: 13px; }
-
-    .tab-btn { font-size: 13px; padding: 12px 16px 9px; letter-spacing: 1.5px; }
-
-    /* push content up so bottom sheet doesn't cover it */
-    #menu-panel {
-      padding-bottom: 0;
-      flex-direction: column;
-    }
-    #search-bar {
-      order: -1; /* move search to top, below tabs */
-      position: static;
-      z-index: auto;
-      border-top: none;
-      border-bottom: 1px solid #222;
-    }
-    #items-container {
-      padding-bottom: 80px; /* space above bottom sheet */
-    }
+    #handle .peek .pill { background: var(--accent); padding: 2px 10px; border-radius: 12px; font-size: 15px; }
+    #handle .peek .pk-total { margin-left: auto; color: #fff; background: var(--accent); padding: 1px 10px; border-radius: 10px; }
+    #handle .peek { width: 100%; padding: 0 18px; }
+    #order h2 { padding-top: 6px; }
+    #order.open #handle .bar { background:#777; }
+    #grid { grid-template-columns: repeat(auto-fill, minmax(46%, 1fr)); }
+    #gridwrap { padding-bottom: 96px; }
+    #header h1 { font-size: 22px; letter-spacing: 2px; }
+    #header .sub { display:none; }
   }
-
-  /* SEARCH BAR */
-  #search-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 16px;
-    background: #0e0e0e;
-    border-top: 1px solid #222;
-    flex-shrink: 0;
-  }
-
-  #search-input {
-    flex: 1;
-    background: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 8px;
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    padding: 10px 14px;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  #search-input::placeholder { color: var(--gray-dark); }
-  #search-input:focus { border-color: var(--accent); }
-
-  #search-clear {
-    background: none;
-    border: none;
-    color: var(--gray-mid);
-    font-size: 20px;
-    cursor: pointer;
-    padding: 4px 8px;
-    display: none;
-    line-height: 1;
-    -webkit-tap-highlight-color: transparent;
-  }
-  #search-clear.visible { display: block; }
-
-  .search-results-label {
-    font-size: 11px;
-    color: var(--gray-mid);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 12px 20px 4px;
-  }
-
-  @media (max-width: 768px) {
-    #search-bar {
-      padding: 8px 12px;
-    }
-    #search-input {
-      font-size: 16px;
-      padding: 11px 14px;
-    }
-    #search-clear { font-size: 22px; padding: 6px 10px; }
-  }
-
-  @media (min-width: 769px) {
-    #order-handle { display: none; }
-    #mobile-total-pill { display: none; }
-    #mobile-badge { display: none; }
+  @media (max-width: 400px) {
+    #grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
 <body>
-
 <div id="app">
   <header id="header">
-    <div class="logo-circle">
-      <svg class="logo-text-svg" viewBox="0 0 100 100">
-        <defs>
-          <path id="circle-top" d="M 50,50 m -32,0 a 32,32 0 1,1 64,0" />
-          <path id="circle-bot" d="M 50,50 m -32,0 a 32,32 0 0,0 64,0" />
-        </defs>
-        <text fill="white" font-family="'Bebas Neue', sans-serif" font-size="17" letter-spacing="3">
-          <textPath href="#circle-top" startOffset="2%">VAARBAR</textPath>
-        </text>
-        <text fill="white" font-family="'Bebas Neue', sans-serif" font-size="17" letter-spacing="6">
-          <textPath href="#circle-bot" startOffset="18%">DE</textPath>
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 40 40">
+        <defs><path id="cp" d="M 20 20 m -14 0 a 14 14 0 1 1 28 0 a 14 14 0 1 1 -28 0"/></defs>
+        <text font-family="Bebas Neue" font-size="6.3" letter-spacing="1.2" fill="#fff">
+          <textPath href="#cp" startOffset="2%">DE VAARBAR · DE VAARBAR ·</textPath>
         </text>
       </svg>
     </div>
     <h1>DE VAARBAR</h1>
-    <span class="subtitle">Bestelsysteem</span>
+    <span class="sub">Bestelsysteem</span>
   </header>
 
-  <section id="menu-panel">
-    <nav id="tabs"></nav>
-    <div id="items-container">
-      <div class="items-grid" id="items-grid"></div>
+  <section id="entry">
+    <div id="tabs"></div>
+    <div id="searchwrap">
+      <input id="search" type="text" placeholder="Zoek een drankje of hapje…" autocomplete="off">
     </div>
-    <div id="search-bar">
-      <input id="search-input" type="search" inputmode="search" placeholder="Zoek een drankje..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="onSearch(this.value)" />
-      <button id="search-clear" onclick="clearSearch()">✕</button>
-    </div>
+    <div id="gridwrap"><div id="grid"></div></div>
   </section>
 
-  <aside id="order-panel">
-    <div id="order-handle" onclick="toggleOrderPanel()">
-      <div class="handle-bar"></div>
-      <div id="order-handle-row">
-        <h2>Bestelling</h2>
-        <div id="mobile-total-pill">
-          <span id="mobile-badge" style="display:none">0</span>
-          <span id="mobile-total">€ 0,00</span>
-        </div>
-      </div>
+  <aside id="order">
+    <div id="handle">
+      <span class="bar"></span>
+      <span class="peek">
+        <span class="pill" id="pk-cnt">0</span>
+        <span>Bestelling</span>
+        <span class="pk-total" id="pk-total">€0,00</span>
+      </span>
     </div>
-    <div id="order-header">
-      <h2>Bestelling</h2>
-      <div class="order-meta" id="order-meta">Geen items</div>
-    </div>
-    <div id="order-items"></div>
-    <div id="order-footer">
+    <h2>Overzicht <span class="cnt" id="ord-cnt">0 items</span></h2>
+    <div id="lines"></div>
+    <div id="foot">
       <div id="total-row">
-        <span id="total-label">Totaal</span>
-        <span id="total-amount">€ 0,00</span>
+        <span class="lbl">Totaal</span>
+        <span class="amt" id="total">€0,00</span>
       </div>
-      <div id="count-row" id="count-row"></div>
-      <button id="new-order-btn" onclick="askNewOrder()">+ NIEUW ORDER</button>
+      <button id="newbtn" disabled>Nieuw Order</button>
     </div>
   </aside>
 </div>
 
-<div id="confirm-overlay">
-  <div id="confirm-box">
+<div id="modal">
+  <div class="modal-box">
     <h3>Nieuw order?</h3>
-    <p>De huidige bestelling wordt gewist. Ben je zeker?</p>
-    <div class="confirm-btns">
-      <button id="confirm-cancel" onclick="closeConfirm()">Annuleer</button>
-      <button id="confirm-ok" onclick="confirmNewOrder()">Wissen</button>
+    <p>De huidige bestelling wordt gewist en je begint met een lege bon.</p>
+    <div class="modal-btns">
+      <button class="mb-cancel" id="m-cancel">Annuleren</button>
+      <button class="mb-ok" id="m-ok">Wissen</button>
     </div>
   </div>
 </div>
 
 <script>
-const MENU = {
-  "Aperitieven": [
-    { name: "Campari Spritz", sub: "Campari · 25 cl", price: 7.50 },
-    { name: "Aperol Spritz", sub: "Aperol · 25 cl", price: 7.00 },
-    { name: "Lillet Blanc", sub: "Lillet · 10 cl", price: 5.50 },
-    { name: "Martini Rosso", sub: "Martini · 10 cl", price: 5.00 },
-    { name: "Gin Tonic", sub: "Diverse · 50 cl", price: 8.50 },
-    { name: "Prosecco", sub: "Valdo · 15 cl", price: 5.50 },
-    { name: "Cava", sub: "Huismerk · 15 cl", price: 5.00 },
-  ],
-  "Wijnen": [
-    { name: "Huiswijn Rood", sub: "Merlot/Cab · 15 cl", price: 4.50 },
-    { name: "Huiswijn Wit", sub: "Chardonnay · 15 cl", price: 4.50 },
-    { name: "Huiswijn Rosé", sub: "Grenache · 15 cl", price: 4.50 },
-    { name: "Côtes du Rhône", sub: "Rood · Fles 75 cl", price: 22.00 },
-    { name: "Sauvignon Blanc", sub: "Wit · Fles 75 cl", price: 24.00 },
-    { name: "Rosé de Provence", sub: "Rosé · Fles 75 cl", price: 26.00 },
-    { name: "Prosecco Fles", sub: "Mousserend · 75 cl", price: 28.00 },
-  ],
-  "Cocktails": [
-    { name: "Mojito", sub: "Rum, munt, limoen", price: 9.00 },
-    { name: "Daiquiri", sub: "Rum, limoen, suiker", price: 9.00 },
-    { name: "Cosmopolitan", sub: "Vodka, cranberry", price: 9.50 },
-    { name: "Espresso Martini", sub: "Vodka, kahlúa", price: 10.00 },
-    { name: "Negroni", sub: "Gin, Campari", price: 9.50 },
-    { name: "Aperol Spritz", sub: "Aperol, prosecco", price: 7.00 },
-    { name: "Virgin Mojito", sub: "Alcoholvrij", price: 6.00 },
-    { name: "Tropical Punch", sub: "Alcoholvrij", price: 6.00 },
-  ],
-  "Frisdranken": [
-    { name: "Cola", sub: "Coca-Cola · 33 cl", price: 3.00 },
-    { name: "Fanta Orange", sub: "33 cl", price: 3.00 },
-    { name: "Sprite", sub: "33 cl", price: 3.00 },
-    { name: "Ice Tea", sub: "Fuze Tea · 33 cl", price: 3.00 },
-    { name: "Tonic", sub: "Schweppes · 20 cl", price: 2.50 },
-    { name: "Bruiswater", sub: "SPA Rood · 33 cl", price: 2.50 },
-    { name: "Plat water", sub: "SPA Blauw · 33 cl", price: 2.50 },
-    { name: "Verse Jus", sub: "Vers geperst · 25 cl", price: 3.50 },
-    { name: "Red Bull", sub: "25 cl", price: 4.00 },
-  ],
-  "Snacks": [
-    { name: "Nootjes mix", sub: "Geroosterd", price: 3.00 },
-    { name: "Chips", sub: "Naturel of paprika", price: 2.50 },
-    { name: "Olijven", sub: "Gemarineerd", price: 3.50 },
-    { name: "Broodplankje", sub: "Stokbrood + dips", price: 6.00 },
-    { name: "Kaasplankje", sub: "Lokale kazen", price: 9.00 },
-    { name: "Charcuterie", sub: "Ham, salami, coppa", price: 9.00 },
-    { name: "Bitterballen", sub: "6 stuks", price: 7.00 },
-    { name: "Veggie bitterballen", sub: "6 stuks", price: 7.00 },
-  ]
-};
+const MENU = [{"cat": "Favorieten", "items": [{"n": "Spa Rood", "p": 2.5, "c": "#FFC071"}, {"n": "Spa Blauw", "p": 2.5, "c": "#FFC071"}, {"n": "Coca Cola", "p": 2.8, "c": "#FFC071"}, {"n": "Cola Zero", "p": 2.8, "c": "#FFC071"}, {"n": "Fanta", "p": 2.8, "c": "#FFC071"}, {"n": "Huis citroenlimonade", "p": 4.5, "c": "#FFC071"}, {"n": "Huis Iced Tea", "p": 4.5, "c": "#FFC071"}, {"n": "Bio appelsap", "p": 3.5, "c": "#FFC071"}, {"n": "Stella", "p": 2.8, "c": "#F1D030"}, {"n": "Rodenbach", "p": 2.8, "c": "#F1D030"}, {"n": "Rodenbach Fruitage 3,9%", "p": 3.5, "c": "#F1D030"}, {"n": "Karmeliet tripel", "p": 4.5, "c": "#F1D030"}, {"n": "Sint-Bernardus Pater", "p": 4.5, "c": "#F1D030"}, {"n": "Sint-Bernardus tripel", "p": 4.5, "c": "#F1D030"}, {"n": "Martha Tripel", "p": 4.5, "c": "#F1D030"}, {"n": "Martha Rouge", "p": 4.5, "c": "#F1D030"}, {"n": "Duvel", "p": 4.5, "c": "#F1D030"}, {"n": "Stella 0,0%", "p": 2.7, "c": "#F1D030"}, {"n": "Sangria Quint rood", "p": 8.5, "c": "#63B2DE"}, {"n": "Sangria Quint wit", "p": 8.5, "c": "#63B2DE"}, {"n": "Aperol Spritz", "p": 9.0, "c": "#63B2DE"}, {"n": "Picon Vin Blanc", "p": 9.0, "c": "#63B2DE"}, {"n": "Limoncello Spritz", "p": 9.0, "c": "#63B2DE"}, {"n": "Ros\u00e9", "p": 5.5, "c": "#6DC037"}, {"n": "Witte wijn", "p": 5.5, "c": "#6DC037"}, {"n": "Koffie", "p": 2.8, "c": "#FFC071"}, {"n": "Deca", "p": 2.8, "c": "#FFC071"}, {"n": "Croky paprika / zout / thai curry", "p": 2.0, "c": "#63B2DE"}, {"n": "Driesje", "p": 2.5, "c": "#63B2DE"}, {"n": "Vaarbarfrietjes", "p": 5.5, "c": "#63B2DE"}, {"n": "Pannenkoek boter suiker", "p": 4.5, "c": "#63B2DE"}]}, {"cat": "Fris", "items": [{"n": "Spa Rood", "p": 2.5, "c": "#FFC071"}, {"n": "Spa Blauw", "p": 2.5, "c": "#FFC071"}, {"n": "Coca Cola", "p": 2.7, "c": "#FFC071"}, {"n": "Cola Zero", "p": 2.7, "c": "#FFC071"}, {"n": "Fanta", "p": 2.7, "c": "#FFC071"}, {"n": "Fristi", "p": 2.7, "c": "#FFC071"}, {"n": "C\u00e9c\u00e9mel", "p": 2.7, "c": "#FFC071"}, {"n": "Schweppes tonic zero", "p": 2.7, "c": "#FFC071"}, {"n": "Fever Tree Ginger Beer", "p": 4.0, "c": "#FFC071"}, {"n": "Huis citroenlimonade", "p": 4.2, "c": "#FFC071"}, {"n": "Huis Iced Tea", "p": 4.2, "c": "#FFC071"}, {"n": "Crodino Biondo", "p": 4.8, "c": "#FFC071"}, {"n": "Bio appelsap", "p": 3.5, "c": "#9CE159"}, {"n": "Bio sinaasappelsap", "p": 3.5, "c": "#9CE159"}, {"n": "Bio appel-mangosap", "p": 3.5, "c": "#9CE159"}, {"n": "Smoothie \u2018Strawberry Split\u2019", "p": 6.5, "c": "#FF5F5D"}, {"n": "Smoothie \u2018Mango Paradise\u2019", "p": 6.5, "c": "#FF5F5D"}, {"n": "Bananenmilkshake", "p": 6.5, "c": "#FF5F5D"}]}, {"cat": "Bier & Wijn", "items": [{"n": "Stella", "p": 2.8, "c": "#F1D030"}, {"n": "Rodenbach", "p": 2.8, "c": "#F1D030"}, {"n": "Rodenbach Fruitage 3,9%", "p": 3.5, "c": "#F1D030"}, {"n": "Karmeliet tripel", "p": 4.5, "c": "#F1D030"}, {"n": "Sint-Bernardus Pater", "p": 4.5, "c": "#F1D030"}, {"n": "Sint-Bernardus Tripel", "p": 4.5, "c": "#F1D030"}, {"n": "Martha Tripel", "p": 4.5, "c": "#F1D030"}, {"n": "Martha Rouge", "p": 4.5, "c": "#F1D030"}, {"n": "Victoria", "p": 4.5, "c": "#F1D030"}, {"n": "Duvel", "p": 4.5, "c": "#F1D030"}, {"n": "Stella 0,0%", "p": 2.7, "c": "#79AE3D"}, {"n": "Rodenbach Fruitage 0,0%", "p": 3.5, "c": "#79AE3D"}, {"n": "Martha alcoholvrij", "p": 4.2, "c": "#79AE3D"}, {"n": "Ros\u00e9 glas", "p": 5.5, "c": "#63B2DE"}, {"n": "Ros\u00e9 fles", "p": 24.0, "c": "#63B2DE"}, {"n": "Wit glas", "p": 5.5, "c": "#63B2DE"}, {"n": "Wit fles", "p": 24.0, "c": "#63B2DE"}, {"n": "Rood", "p": 5.5, "c": "#63B2DE"}, {"n": "Rood fles", "p": 24.0, "c": "#63B2DE"}, {"n": "Cava Pupitre glas", "p": 6.8, "c": "#63B2DE"}, {"n": "Cava Pupitre fles", "p": 30.0, "c": "#63B2DE"}]}, {"cat": "Apero & Cocktails", "items": [{"n": "Cava Pupitre", "p": 6.8, "c": "#63B2DE"}, {"n": "Picon Bi\u00e8re", "p": 6.5, "c": "#63B2DE"}, {"n": "Martini Bellini", "p": 7.5, "c": "#63B2DE"}, {"n": "Crodino Fritz", "p": 8.0, "c": "#63B2DE"}, {"n": "Sangria rood", "p": 8.5, "c": "#63B2DE"}, {"n": "Sangria wit", "p": 8.5, "c": "#63B2DE"}, {"n": "Sangria ros\u00e9", "p": 8.5, "c": "#63B2DE"}, {"n": "Aperol Spritz", "p": 9.0, "c": "#63B2DE"}, {"n": "Picon Vin Blanc", "p": 9.0, "c": "#63B2DE"}, {"n": "Limoncello Spritz", "p": 9.0, "c": "#63B2DE"}, {"n": "Mojito Especial", "p": 11.0, "c": "#FFC071"}, {"n": "Caipirinha", "p": 11.0, "c": "#FFC071"}, {"n": "Cuba Libre", "p": 11.0, "c": "#FFC071"}, {"n": "Lazy Red Cheeks", "p": 11.0, "c": "#FFC071"}, {"n": "Pornstar Martini", "p": 11.0, "c": "#FFC071"}, {"n": "Dark \u2019n\u2019 stormy", "p": 11.0, "c": "#FFC071"}, {"n": "Virgin Mojito", "p": 8.5, "c": "#79AE3D"}, {"n": "Grapefruit & Rosemary", "p": 8.5, "c": "#79AE3D"}, {"n": "Moscow Mule", "p": 8.5, "c": "#79AE3D"}]}, {"cat": "Warm & Bites", "items": [{"n": "Koffie", "p": 2.8, "c": "#FFC071"}, {"n": "Deca", "p": 2.8, "c": "#FFC071"}, {"n": "Rozenbottelthee", "p": 2.5, "c": "#FFC071"}, {"n": "Kamillethee", "p": 2.5, "c": "#FFC071"}, {"n": "Verse muntthee", "p": 3.8, "c": "#FFC071"}, {"n": "Bolletje vanilleijs met sprinkels", "p": 2.5, "c": "#79AE3D"}, {"n": "Raketje", "p": 2.5, "c": "#79AE3D"}, {"n": "Cornetto Classic", "p": 2.5, "c": "#79AE3D"}, {"n": "Cornetto Aardbeien", "p": 2.5, "c": "#79AE3D"}, {"n": "Magnum Classic", "p": 3.5, "c": "#79AE3D"}, {"n": "Magnum Almond", "p": 3.5, "c": "#79AE3D"}, {"n": "Magnum White", "p": 3.5, "c": "#79AE3D"}, {"n": "Geitentaart", "p": 4.3, "c": "#F1D030"}, {"n": "Geitentaart met roomijs", "p": 5.3, "c": "#F1D030"}, {"n": "Pannenkoek boter suiker", "p": 4.5, "c": "#F1D030"}, {"n": "Croky paprika", "p": 2.0, "c": "#F1D030"}, {"n": "Croky zout", "p": 2.0, "c": "#F1D030"}, {"n": "Croky thai curry", "p": 2.0, "c": "#F1D030"}, {"n": "Popcorn zoet", "p": 2.5, "c": "#63B2DE"}, {"n": "Popcorn zout", "p": 2.5, "c": "#63B2DE"}, {"n": "Bugles met geitenkaas", "p": 6.8, "c": "#63B2DE"}, {"n": "Driesje", "p": 2.5, "c": "#63B2DE"}, {"n": "Hummus met grissini", "p": 6.5, "c": "#63B2DE"}, {"n": "Groendal kaas", "p": 8.5, "c": "#63B2DE"}, {"n": "Pizza Margharita", "p": 11.0, "c": "#63B2DE"}, {"n": "Pizza Chorizo", "p": 13.0, "c": "#63B2DE"}, {"n": "Pizza Hawaii", "p": 13.0, "c": "#63B2DE"}, {"n": "Vaarbarfrietjes", "p": 5.5, "c": "#63B2DE"}]}];
 
-let currentTab = Object.keys(MENU)[0];
-let order = {};
+// ---------- helpers ----------
+const eur = v => '€' + v.toFixed(2).replace('.', ',');
+// relatieve luminantie → kies leesbare tekstkleur
+function textOn(hex){
+  const r=parseInt(hex.slice(1,3),16)/255, g=parseInt(hex.slice(3,5),16)/255, b=parseInt(hex.slice(5,7),16)/255;
+  const lin = c => c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4);
+  const L = 0.2126*lin(r)+0.7152*lin(g)+0.0722*lin(b);
+  return L > 0.55 ? '#14110d' : '#ffffff';
+}
+// unieke sleutel per item (zelfde naam kan in meerdere tabs voorkomen, prijs verschilt soms)
+const keyOf = it => it.n + '|' + it.p;
 
-function buildTabs() {
-  const tabs = document.getElementById('tabs');
-  Object.keys(MENU).forEach(cat => {
-    const btn = document.createElement('button');
-    btn.className = 'tab-btn' + (cat === currentTab ? ' active' : '');
-    btn.textContent = cat;
-    btn.onclick = () => switchTab(cat);
-    tabs.appendChild(btn);
-  });
+// ---------- state ----------
+let activeCat = 0;
+const cart = new Map(); // key -> {n,p,c,q}
+
+// ---------- build tabs ----------
+const tabsEl = document.getElementById('tabs');
+const starSVG = '<svg viewBox="0 0 24 24"><path fill="#d99a2b" d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.8 6.1 20.2l1.2-6.6L2.5 9l6.6-.9z"/></svg>';
+MENU.forEach((cat, i) => {
+  const b = document.createElement('button');
+  b.className = 'tab' + (i===0?' active':'') + (i===0?' fav':'');
+  b.innerHTML = (i===0 ? starSVG : '') + cat.cat;
+  b.onclick = () => { activeCat = i; document.getElementById('search').value=''; renderTabs(); renderGrid(); document.getElementById('gridwrap').scrollTop=0; };
+  tabsEl.appendChild(b);
+});
+function renderTabs(){
+  [...tabsEl.children].forEach((b,i)=> b.classList.toggle('active', i===activeCat));
 }
 
-function switchTab(cat) {
-  currentTab = cat;
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', Object.keys(MENU)[i] === cat);
-  });
-  // Reset search
-  searchQuery = '';
-  const input = document.getElementById('search-input');
-  if (input) input.value = '';
-  document.getElementById('search-clear').classList.remove('visible');
-  renderItems();
-}
-
-function getOrderKey(cat, name) { return cat + '|||' + name; }
-
-function renderItems() {
-  const grid = document.getElementById('items-grid');
-  grid.innerHTML = '';
-  MENU[currentTab].forEach(item => {
-    const key = getOrderKey(currentTab, item.name);
-    const qty = order[key] ? order[key].qty : 0;
-    const card = document.createElement('div');
-    card.className = 'item-card' + (qty > 0 ? ' in-order' : '');
-    card.innerHTML = `
-      ${qty > 0 ? `<div class="item-qty-badge">${qty}</div>` : ''}
-      <div class="item-name">${item.name}</div>
-      <div class="item-sub">${item.sub}</div>
-      <div class="item-price">€ ${item.price.toFixed(2).replace('.', ',')}</div>
-    `;
-    card.onclick = () => addToOrder(currentTab, item);
-    grid.appendChild(card);
-  });
-}
-
-function addToOrder(cat, item) {
-  const key = getOrderKey(cat, item.name);
-  if (order[key]) {
-    order[key].qty++;
+// ---------- grid ----------
+const gridEl = document.getElementById('grid');
+function renderGrid(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  let items;
+  if (q) {
+    // zoek over alle categorieën, behoud volgorde
+    const seen = new Set(); items = [];
+    MENU.forEach(c => c.items.forEach(it => {
+      if (it.n.toLowerCase().includes(q)) { const k=keyOf(it); if(!seen.has(k)){seen.add(k); items.push(it);} }
+    }));
   } else {
-    order[key] = { name: item.name, price: item.price, qty: 1, cat };
+    items = MENU[activeCat].items;
   }
-  renderItems();
-  renderOrder();
+  gridEl.innerHTML = '';
+  if (!items.length){ gridEl.innerHTML = '<div class="empty-grid">Geen resultaten gevonden.</div>'; return; }
+  items.forEach(it => {
+    const k = keyOf(it);
+    const fg = textOn(it.c);
+    const inCart = cart.has(k);
+    const card = document.createElement('div');
+    card.className = 'card' + (inCart?' incart':'');
+    card.style.background = it.c;
+    card.style.color = fg;
+    const prBg = fg==='#ffffff' ? 'rgba(0,0,0,.28)' : 'rgba(255,255,255,.55)';
+    card.innerHTML =
+      '<span class="qty">'+(inCart?cart.get(k).q:0)+'</span>' +
+      '<span class="nm">'+it.n+'</span>' +
+      '<span class="pr" style="background:'+prBg+'">'+eur(it.p)+'</span>';
+    card.onclick = () => { add(it); card.classList.add('flash'); setTimeout(()=>card.classList.remove('flash'),140); };
+    gridEl.appendChild(card);
+  });
 }
 
-function changeQty(key, delta) {
-  if (!order[key]) return;
-  order[key].qty += delta;
-  if (order[key].qty <= 0) delete order[key];
-  renderItems();
-  renderOrder();
+// ---------- cart ops ----------
+function add(it){
+  const k = keyOf(it);
+  if (cart.has(k)) cart.get(k).q++;
+  else cart.set(k, {n:it.n, p:it.p, c:it.c, q:1});
+  renderOrder(); syncGridQty();
+}
+function changeQty(k, d){
+  const e = cart.get(k); if(!e) return;
+  e.q += d; if (e.q<=0) cart.delete(k);
+  renderOrder(); syncGridQty();
+}
+function syncGridQty(){
+  [...gridEl.children].forEach(card=>{
+    const nm = card.querySelector('.nm'); if(!nm) return;
+    // herrender enkel badges/outline via volledige grid-refresh is duur; doe gericht
+  });
+  renderGrid(); // eenvoudig en betrouwbaar voor deze schaal
 }
 
-function renderOrder() {
-  const container = document.getElementById('order-items');
-  const keys = Object.keys(order);
-
-  if (keys.length === 0) {
-    container.innerHTML = `
-      <div class="empty-order">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-        </svg>
-        Nog niets besteld
-      </div>`;
-    document.getElementById('order-meta').textContent = 'Geen items';
-    document.getElementById('total-amount').textContent = '€ 0,00';
-    document.getElementById('count-row').textContent = '';
-    return;
+// ---------- order panel ----------
+const linesEl = document.getElementById('lines');
+function renderOrder(){
+  linesEl.innerHTML = '';
+  let total = 0, count = 0;
+  if (cart.size === 0){
+    linesEl.innerHTML = '<div class="empty-order">Nog geen items.<br>Tik op een drankje om te starten.</div>';
   }
-
-  let total = 0;
-  let totalItems = 0;
-  container.innerHTML = '';
-
-  keys.forEach(key => {
-    const item = order[key];
-    const lineTotal = item.price * item.qty;
-    total += lineTotal;
-    totalItems += item.qty;
-
+  cart.forEach((e,k)=>{
+    total += e.p*e.q; count += e.q;
     const row = document.createElement('div');
-    row.className = 'order-item-row';
-    row.innerHTML = `
-      <div class="order-item-name">${item.name}</div>
-      <div class="order-item-price">€ ${lineTotal.toFixed(2).replace('.', ',')}</div>
-      <div class="qty-controls">
-        <button class="qty-btn minus" onclick="changeQty('${key}', -1)">−</button>
-        <div class="qty-display">${item.qty}</div>
-        <button class="qty-btn plus" onclick="changeQty('${key}', 1)">+</button>
-      </div>
-    `;
-    container.appendChild(row);
+    row.className = 'line';
+    row.innerHTML =
+      '<span class="swatch" style="background:'+e.c+'"></span>' +
+      '<div class="info"><div class="ln">'+e.n+'</div><div class="lp">'+eur(e.p)+' / stuk</div></div>' +
+      '<div class="ctrl"><button data-m="-1">−</button><span class="n">'+e.q+'</span><button data-m="1">+</button></div>' +
+      '<span class="lt">'+eur(e.p*e.q)+'</span>';
+    row.querySelector('[data-m="-1"]').onclick = ()=>changeQty(k,-1);
+    row.querySelector('[data-m="1"]').onclick  = ()=>changeQty(k, 1);
+    linesEl.appendChild(row);
   });
-
-  document.getElementById('order-meta').textContent = `${keys.length} artikel${keys.length !== 1 ? 's' : ''}`;
-  document.getElementById('total-amount').textContent = '€ ' + total.toFixed(2).replace('.', ',');
-  document.getElementById('count-row').textContent = `${totalItems} stuks totaal`;
+  document.getElementById('total').textContent = eur(total);
+  document.getElementById('ord-cnt').textContent = count + (count===1?' item':' items');
+  document.getElementById('pk-cnt').textContent = count;
+  document.getElementById('pk-total').textContent = eur(total);
+  document.getElementById('newbtn').disabled = cart.size===0;
 }
 
-function askNewOrder() {
-  if (Object.keys(order).length === 0) return;
-  document.getElementById('confirm-overlay').classList.add('show');
+// ---------- nieuw order ----------
+const modal = document.getElementById('modal');
+document.getElementById('newbtn').onclick = ()=>{ if(cart.size) modal.classList.add('show'); };
+document.getElementById('m-cancel').onclick = ()=> modal.classList.remove('show');
+document.getElementById('m-ok').onclick = ()=>{ cart.clear(); renderOrder(); renderGrid(); modal.classList.remove('show'); activeCat=0; renderTabs(); renderGrid(); };
+modal.onclick = e => { if(e.target===modal) modal.classList.remove('show'); };
+
+// ---------- search ----------
+document.getElementById('search').addEventListener('input', renderGrid);
+
+// ---------- mobile bottom sheet ----------
+const orderEl = document.getElementById('order');
+const handle = document.getElementById('handle');
+let startY=null, startOpen=false;
+handle.addEventListener('click', e=>{ if(dragMoved) return; orderEl.classList.toggle('open'); });
+let dragMoved=false;
+function onStart(y){ startY=y; startOpen=orderEl.classList.contains('open'); dragMoved=false; orderEl.style.transition='none'; }
+function onMove(y){
+  if(startY===null) return; const dy=y-startY; if(Math.abs(dy)>6) dragMoved=true;
+  const h=orderEl.offsetHeight; const base= startOpen?0:(h-76);
+  let t=base+dy; t=Math.max(0,Math.min(h-76,t)); orderEl.style.transform='translateY('+t+'px)';
 }
-
-function closeConfirm() {
-  document.getElementById('confirm-overlay').classList.remove('show');
+function onEnd(y){
+  if(startY===null) return; orderEl.style.transition=''; orderEl.style.transform='';
+  const dy=y-startY;
+  if(dragMoved){ if(dy<-40) orderEl.classList.add('open'); else if(dy>40) orderEl.classList.remove('open'); else orderEl.classList.toggle('open', startOpen); }
+  startY=null;
 }
+handle.addEventListener('touchstart',e=>onStart(e.touches[0].clientY),{passive:true});
+handle.addEventListener('touchmove', e=>{onMove(e.touches[0].clientY); e.preventDefault();},{passive:false});
+handle.addEventListener('touchend', e=>onEnd(e.changedTouches[0].clientY));
 
-function confirmNewOrder() {
-  order = {};
-  closeConfirm();
-  renderItems();
-  renderOrder();
-}
-
-function toggleOrderPanel() {
-  const panel = document.getElementById('order-panel');
-  panel.classList.toggle('open');
-}
-
-// --- SWIPE GESTURE FOR BOTTOM SHEET ---
-(function() {
-  const panel = document.getElementById('order-panel');
-  const handle = document.getElementById('order-handle');
-  if (!handle) return;
-
-  let startY = 0;
-  let startTranslate = 0;
-  let isDragging = false;
-  const CLOSED_TRANSLATE = '100% - 68px';
-
-  function getCurrentTranslate() {
-    const style = window.getComputedStyle(panel);
-    const matrix = new DOMMatrix(style.transform);
-    return matrix.m42; // translateY value in px
-  }
-
-  function getPanelHeight() {
-    return panel.offsetHeight;
-  }
-
-  handle.addEventListener('touchstart', (e) => {
-    isDragging = true;
-    startY = e.touches[0].clientY;
-    startTranslate = getCurrentTranslate();
-    panel.style.transition = 'none';
-  }, { passive: true });
-
-  window.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    const dy = e.touches[0].clientY - startY;
-    let newY = startTranslate + dy;
-    // Clamp: can't go above 0 (fully open) or below closed position
-    const maxDown = getPanelHeight() - 68;
-    newY = Math.max(-10, Math.min(newY, maxDown));
-    panel.style.transform = `translateY(${newY}px)`;
-  }, { passive: true });
-
-  window.addEventListener('touchend', (e) => {
-    if (!isDragging) return;
-    isDragging = false;
-    panel.style.transition = 'transform 0.32s cubic-bezier(0.4, 0, 0.2, 1)';
-
-    const dy = e.changedTouches[0].clientY - startY;
-    const panelH = getPanelHeight();
-
-    if (dy < -40) {
-      // Swiped up — open
-      panel.classList.add('open');
-      panel.style.transform = '';
-    } else if (dy > 40) {
-      // Swiped down — close
-      panel.classList.remove('open');
-      panel.style.transform = '';
-    } else {
-      // Small movement — toggle based on current position
-      const currentY = getCurrentTranslate();
-      if (currentY < panelH / 2) {
-        panel.classList.add('open');
-      } else {
-        panel.classList.remove('open');
-      }
-      panel.style.transform = '';
-    }
-  }, { passive: true });
-})();
-
-function updateMobilePill() {
-  const keys = Object.keys(order);
-  const totalItems = keys.reduce((s, k) => s + order[k].qty, 0);
-  const total = keys.reduce((s, k) => s + order[k].price * order[k].qty, 0);
-  const badge = document.getElementById('mobile-badge');
-  const mob = document.getElementById('mobile-total');
-  if (mob) mob.textContent = '€ ' + total.toFixed(2).replace('.', ',');
-  if (badge) {
-    badge.textContent = totalItems;
-    badge.style.display = totalItems > 0 ? 'flex' : 'none';
-  }
-}
-
-const _origRenderOrder = renderOrder;
-renderOrder = function() {
-  _origRenderOrder();
-  updateMobilePill();
-};
-
-let searchQuery = '';
-
-function onSearch(val) {
-  searchQuery = val.trim().toLowerCase();
-  document.getElementById('search-clear').classList.toggle('visible', val.length > 0);
-  if (searchQuery.length > 0) {
-    renderSearchResults();
-  } else {
-    renderItems();
-  }
-}
-
-function clearSearch() {
-  document.getElementById('search-input').value = '';
-  searchQuery = '';
-  document.getElementById('search-clear').classList.remove('visible');
-  renderItems();
-}
-
-function renderSearchResults() {
-  const grid = document.getElementById('items-grid');
-  grid.innerHTML = '';
-
-  // Collect all matches across all categories
-  let matches = [];
-  Object.keys(MENU).forEach(cat => {
-    MENU[cat].forEach(item => {
-      if (item.name.toLowerCase().includes(searchQuery) || item.sub.toLowerCase().includes(searchQuery)) {
-        matches.push({ cat, item });
-      }
-    });
-  });
-
-  if (matches.length === 0) {
-    grid.innerHTML = `<div style="color:var(--gray-mid);font-size:13px;padding:20px;grid-column:1/-1;">Geen resultaten voor "<strong style="color:var(--white)">${searchQuery}</strong>"</div>`;
-    return;
-  }
-
-  // Add label
-  const label = document.createElement('div');
-  label.className = 'search-results-label';
-  label.style.gridColumn = '1 / -1';
-  label.textContent = `${matches.length} resultaat${matches.length !== 1 ? 'en' : ''}`;
-  grid.appendChild(label);
-
-  matches.forEach(({ cat, item }) => {
-    const key = getOrderKey(cat, item.name);
-    const qty = order[key] ? order[key].qty : 0;
-    const card = document.createElement('div');
-    card.className = 'item-card' + (qty > 0 ? ' in-order' : '');
-    // Highlight match
-    const highlighted = item.name.replace(new RegExp(`(${searchQuery})`, 'gi'), '<mark style="background:var(--accent);color:var(--white);border-radius:2px;padding:0 2px">$1</mark>');
-    card.innerHTML = `
-      ${qty > 0 ? `<div class="item-qty-badge">${qty}</div>` : ''}
-      <div class="item-name">${highlighted}</div>
-      <div class="item-sub">${item.sub} · <span style="color:var(--gray-mid);font-size:10px">${cat}</span></div>
-      <div class="item-price">€ ${item.price.toFixed(2).replace('.', ',')}</div>
-    `;
-    card.onclick = () => {
-      addToOrder(cat, item);
-      // Re-render search results to update badges
-      renderSearchResults();
-    };
-    grid.appendChild(card);
-  });
-}
-
-// Override renderItems to respect active search
-const _origRenderItems = renderItems;
-renderItems = function() {
-  if (searchQuery.length > 0) {
-    renderSearchResults();
-  } else {
-    _origRenderItems();
-  }
-};
-
-buildTabs();
-renderItems();
-renderOrder();
+// ---------- init ----------
+renderTabs(); renderGrid(); renderOrder();
 </script>
 </body>
 </html>
